@@ -1,0 +1,48 @@
+#This was made by Summer Morris
+#email: sdmorris42@tntech.edu
+#designed for ECE 1000 Explorations in ECE Honors Project
+#this code is inspired by https://learn.adafruit.com/getting-started-with-raspberry-pi-pico-circuitpython/neopixel-leds
+
+#import from libraries
+import neopixel
+from machine import Pin
+import time
+#set up lights
+RGB_Pin = 1 #set pin number
+LED_numbers = 50 #number of bulbs
+Luminosity = 1.0  # brightness of bulbs from 0-1
+
+#initialize lights
+Pixel_Lights = neopixel.NeoPixel(Pin(RGB_Pin), LED_numbers)
+#used to define the RGB colors
+def set_Luminosity(colors):
+    R, G, B = colors
+    R = int(R * Luminosity)
+    G = int(G * Luminosity)
+    B = int(B * Luminosity)
+    return (R, G, B)
+
+def toggle_effect():
+   #this will alternate between purple and gold
+    Purple = (41, 120, 132)
+    Gold = (210, 255, 0)  
+
+    for i in range(LED_numbers):
+        if i % 2 == 0:
+            Pixel_Lights[i] = set_Luminosity(Purple)
+        else:
+            Pixel_Lights[i] = set_Luminosity(Gold)
+
+    Pixel_Lights.write()
+    time.sleep(1)
+
+    # This will shift the colors down the lights
+    for i in range(LED_numbers - 1, 0, -1):
+        Pixel_Lights[i] = Pixel_Lights[i - 1]
+
+    Pixel_Lights[0] = set_Luminosity(Purple)  # Set the first LED to purple
+    Pixel_Lights.write()
+    time.sleep(1)
+#this creates a toggling effect
+while True:
+    toggle_effect()
