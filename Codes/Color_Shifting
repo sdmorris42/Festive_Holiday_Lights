@@ -1,0 +1,46 @@
+# This code is created by Summer Morris
+#email: sdmorris42@tntech.edu
+# This code was inspired by the rotating rainbow animation from https://electrocredible.com/neopixel-micropython-raspberry-pi-pico-ws2812b/#google_vignette
+# This code was also inspired by https://randomnerdtutorials.com/micropython-ws2812b-addressable-rgb-leds-neopixel-esp32-esp8266/
+
+#this imports important items 
+import neopixel  
+from machine import Pin  
+import time
+
+#set up lights
+RGB_Pin = 1 #set pin number
+LED_numbers = 50 #number of LEDs
+Luminosity = 1.0  # brightness of bulbs from 0-1
+Location = 0 #this keeps up with the position of the colors
+
+#inititialize the pixel lights
+Pixel_Lights = neopixel.NeoPixel(Pin(RGB_Pin), LED_numbers)
+
+#this function uses the location of colors in the color wheel to generate a rainbow of colors based on its location
+def traditional(loc):
+    if loc < 85:
+        return (loc * 3, 255 - loc * 3, 0)  # this is used to generate colors between red and yellow
+    elif loc < 170:
+        loc -= 85
+        return (255 - loc * 3, 0, loc * 3)  # this is used to generate colors between yellow and green
+    else:
+        loc-= 170
+        return (0, loc * 3, 255 - loc * 3)  # this is used to generate colors between green and blue
+
+def loop():
+    global Location, Luminosity  # the global function is used to optimize the positon and brightness
+
+    for i in range(LED_numbers):
+        #this function will work for however many LEDs are specified 
+        tint = int(i * (255 / LED_numbers) + Location) % 256  # this will change the hue based on the LEDs location and the surrounding colors
+        Colors = traditional(tint)  #this uses the calculations above to retrive a color
+        Colors = tuple(int(val * Luminosity) for val in Colors)  # this changes the brightness of the LEDs
+        Pixel_Lights[(i + Location) % LED_numbers] = Colors  # this sets the color of the next LEDs
+
+    Pixel_Lights.write()  # this is used to send the new colors to the RGB LEDs
+    Location = (Location - 1) % LED_numbers  # this is used to shift the colors backward (or forward if + 1)
+    time.sleep_ms(50)  # this controls the speed
+
+while True:
+    loop()  # this runs the function forever
