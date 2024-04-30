@@ -1,0 +1,51 @@
+#This was made by Summer Morris
+#email: sdmorris42@tntech.edu
+#designed for ECE 1000 Explorations in ECE Honors Project
+#this code is inspired by https://www.youtube.com/watch?v=WpaXMcmwyeU 
+
+#import from libraries
+import neopixel
+from machine import Pin
+import time
+#will randomize colors
+import urandom
+
+#set up lights
+RGB_Pin = 1 #set pin number
+LED_numbers = 50 #number of bulbs
+Luminosity = 1.0  # brightness of bulbs from 0-1
+#initialize lights
+Pixel_Lights = neopixel.NeoPixel(Pin(RGB_Pin), LED_numbers)
+#used to define the RGB colors
+def set_Luminosity(colors):
+    R, G, B = colors
+    R = int(R * Luminosity)
+    G = int(G * Luminosity)
+    B = int(B * Luminosity)
+    return (R, G, B)
+#define the colors used in the effect
+def spirit_effect():
+    #define the colors to be used
+    White = (190, 200, 200)
+    Gold = (210, 255, 0)
+    Colors = [White, Gold]  # colors will change between white and gold
+   # all LEDs will turn white
+    for i in range(LED_numbers):
+        Pixel_Lights[i] = (190, 200, 200)
+    Pixel_Lights.write()
+    
+    while True:
+        # this will randomly change the RGB LEDs to purple or gold
+        for i in range(LED_numbers):
+            if urandom.getrandbits(1):  # randomly turn on
+                # the urandom.randint will randomly produce a bit
+                Col_In = urandom.randint(0, len(Colors) - 1)
+                Pixel_Lights[i] = set_Luminosity(Colors[Col_In])
+            else:
+                Pixel_Lights[i] = (41, 120, 132)  #this will change the LEDs to Purple
+
+        Pixel_Lights.write()
+        time.sleep(0.5)  #this will change the rate at which the LEDs change colors
+
+#this will start the random effect
+spirit_effect()
