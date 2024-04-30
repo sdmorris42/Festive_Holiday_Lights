@@ -1,0 +1,56 @@
+#This was made by Summer Morris
+#email: sdmorris42@tntech.edu
+#designed for ECE 1000 Explorations in ECE Honors Project
+#This code is inspired by https://www.youtube.com/watch?v=WpaXMcmwyeU 
+
+#import from libraries
+import neopixel
+from machine import Pin
+import time
+
+#set up lights
+RGB_Pin = 1 #set pin number
+LED_numbers = 50 #number of bulbs
+Luminosity = 1.0  # brightness of bulbs from 0-1
+#initialize lights
+Pixel_Lights = neopixel.NeoPixel(Pin(RGB_Pin), LED_numbers)
+
+#used to define the RGB colors
+def set_Luminosity(colors):
+    R, G, B = colors
+    R = int(R * Luminosity)
+    G = int(G * Luminosity)
+    B = int(B * Luminosity)
+    return (R, G, B)
+
+#define the colors used in the effect
+def spiral_effect():
+    # this sets the color to purple and gold
+    Purple = (41, 120, 132)
+    Gold = (210, 255, 0)
+    #set the length of the run
+    length = 49
+  # Turn all LEDs to Purple at the beginning
+    for i in range(LED_numbers):
+        Pixel_Lights[i] = set_Luminosity(Purple)
+    Pixel_Lights.write()
+    time.sleep(0.5)
+    
+    #creates a spiral effect
+    while True:
+        # this shifts the colors to the next LED
+        for i in range(LED_numbers - 1, 0, -1):
+            Pixel_Lights[i] = Pixel_Lights[i - 1]
+        
+        # this will add the color gold at the beginning of the strip
+        Pixel_Lights[0] = set_Luminosity(Gold if length > 0 else Purple)
+        Pixel_Lights.write()
+        time.sleep(0.04)  # Control the speed of the running effect
+        
+        length -= 1  # Decrease the length of the gold run
+        
+        # Reset the gold length after completing one full cycle
+        if length == -LED_numbers:
+            length = 49 # Reset the gold run length
+# Start the effect
+spiral_effect()
