@@ -1,0 +1,50 @@
+#This was made by Summer Morris
+#email: sdmorris42@tntech.edu
+#designed for ECE 1000 Explorations in ECE Honors Project
+#this code is inspired by https://learn.adafruit.com/getting-started-with-raspberry-pi-pico-circuitpython/neopixel-leds
+
+#import from libraries
+import neopixel
+from machine import Pin
+import time
+
+#set up lights
+RGB_Pin = 1 #set pin number
+LED_numbers = 50 #number of bulbs
+Luminosity = 1.0  # brightness of bulbs from 0-1
+
+#initialize lights
+Pixel_Lights = neopixel.NeoPixel(Pin(RGB_Pin), LED_numbers)
+
+#used to define the RGB colors
+def set_Luminosity(colors):
+    R, G, B = colors
+    R = int(R * Luminosity)
+    G = int(G * Luminosity)
+    B = int(B * Luminosity)
+    return (R, G, B)
+
+def flash():
+    #Show gold
+    colors = (210, 255, 0)  
+    colors = set_Luminosity(colors)
+    Pixel_Lights.fill(colors)
+    Pixel_Lights.write()
+    time.sleep(1)
+
+    #Show Purple
+    colors = (0, 255, 255) 
+    colors = set_Luminosity(colors)
+    Pixel_Lights.fill(colors)
+    Pixel_Lights.write()
+    time.sleep(1)
+    
+    #Show White
+    colors = (190, 200, 200)  
+    colors = set_Luminosity(colors)
+    Pixel_Lights.fill(colors)
+    Pixel_Lights.write()
+    time.sleep(1)
+#loop colors
+while True:
+    flash()
